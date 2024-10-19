@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empréstimos da Biblioteca</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Gerenciar Empréstimos</h1>
+
+        <!-- Formulário para emprestar livro -->
+        <form action="/emprestimos" method="POST" class="mt-4">
+            <div class="form-group">
+                <label for="usuarioId">Usuário</label>
+                <select class="form-control" id="usuarioId" name="usuarioId" required>
+                    <% usuarios.forEach(usuario => { %>
+                        <option value="<%= usuario.id %>"><%= usuario.nome %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="livroId">Livro</label>
+                <select class="form-control" id="livroId" name="livroId" required>
+                    <% livros.forEach(livro => { %>
+                        <option value="<%= livro.id %>"><%= livro.nome %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Emprestar Livro</button>
+        </form>
+
+        <!-- Lista de empréstimos -->
+        <h2 class="mt-5">Empréstimos Realizados</h2>
+        <table class="table table-striped table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Livro</th>
+                    <th>Data de Empréstimo</th>
+                    <th>Data de Devolução</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (emprestimos.length > 0) { %>
+                    <% emprestimos.forEach(emprestimo => { %>
+                        <tr>
+                            <td><%= emprestimo.id %></td>
+                            <td><%= emprestimo.Usuario.nome %></td>
+                            <td><%= emprestimo.Livro.nome %></td>
+                            <td><%= emprestimo.dataEmprestimo.toLocaleDateString() %></td>
+                            <td>
+                                <% if (emprestimo.dataDevolucao) { %>
+                                    <%= emprestimo.dataDevolucao.toLocaleDateString() %>
+                                <% } else { %>
+                                    <span class="text-danger">Não devolvido</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (!emprestimo.dataDevolucao) { %>
+                                    <form action="/emprestimos/devolver/<%= emprestimo.id %>" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">Devolver</button>
+                                    </form>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="text-center">Nenhum empréstimo realizado ainda.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
